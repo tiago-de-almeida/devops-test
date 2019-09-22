@@ -1,0 +1,18 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: virtual-host
+spec:
+  rules:
+  - host: api.app.net
+    http:
+      paths:
+      - backend:
+          serviceName: app
+          servicePort: 80
+  - host: nginx.app.net
+    http:
+      paths:
+      - backend:
+          serviceName: nginx-service
+          servicePort: 80
