@@ -121,7 +121,7 @@ Para criar uma aplicação no [ArgoCD](https://argoproj.github.io/argo-cd/#what-
 
 ### Dashboard:
 
-Logue no endereço `https://a678a7151705e4a5d94f16bdf2e0dc30-635835166.sa-east-1.elb.amazonaws.com/applications`
+Logue no endereço `https://<endereço do argo>.sa-east-1.elb.amazonaws.com/applications`
 
 **user:** `admin`
 **pass:** `P@ss4n0w`
