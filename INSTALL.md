@@ -113,7 +113,7 @@ data:
 kubectl apply -f configmap.yml
 
 
-5- Criar todas as aplicações conforme ECR/repositório no ARGOCD
+# 5- Criar todas as aplicações conforme ECR/repositório no ARGOCD
 
 # Deploy automatizado com ArgoCD 
 
