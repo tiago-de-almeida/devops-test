@@ -1,9 +1,10 @@
-1- Criar repositorios de aplicações ECR (tem que ser com mesmo nome do repo) e se for o caso fazer o upload delas
+# 1- Criar repositorios de aplicações ECR (tem que ser com mesmo nome do repo) e se for o caso fazer o upload delas
 Ex:
   304243956035.dkr.ecr.sa-east-1.amazonaws.com/nome-do-repo 
   git config --get remote.origin.url | sed 's/.*\/\([^ ]*\/[^.]*\).*/\1/' | sed 's/micro-servicos//'
 
-2- Criar um repo de infraestrutura com um pasta para o GitLab-CI e uma para ArgoCD
+
+# 2- Criar um repo de infraestrutura com um pasta para o GitLab-CI e uma para ArgoCD
 Ex:
 
     ArgoCD -> argocd/app/development/nome-da-app/
@@ -15,7 +16,7 @@ Ex:
                                                 Ingress.yml (?)
                                               Service.yml
                   
-3- Instalar EKS 
+# 3- Instalar EKS 
 
 -- Passos para provisionamento do cluster EKS
     -- criar keypair com nome EKS
@@ -39,46 +40,56 @@ Ex:
 eksctl create cluster --name dev-cluster --version 1.15 --region us-east-1 --ssh-public-key=eks --nodegroup-name dev-standard-workers --node-type t3.medium --nodes 3 --nodes-min 1 --nodes-max 4 --ssh-access  --managed
 
 
+## LoadBalancer
+https://docs.aws.amazon.com/pt_br/eks/latest/userguide/alb-ingress.html
 
-4- Instalar o ArgoCD no EKS 
 
-# Install Argo CD
+# 4- Instalar o ArgoCD no EKS 
+
+### Install Argo CD
 kubectl create namespace argocd
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
-# Create new cluster roles
+### Create new cluster roles
 kubectl create clusterrolebinding argocd-cluster-admin-binding --clusterrole=cluster-admin --user=tiago.de.almeida8@gmail.com
 
-# Trocar por NodePort
+### Trocar por NodePort
 kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
 
-# Listar Porta do Server 
-kg svc 
+### Listar Porta do Server 
+kubectl get svc -n argocd
 
-# Portas
+### Portas
     nodePort: 31828
 
-# Printar a senha:
+### Printar a senha:
 kubectl get pods -n argocd -l app.kubernetes.io/name=argocd-server -o name | cut -d'/' -f 2
 ele printa uma senha:
 
   argocd-server-<senha>
 
-# Logar:
+### Logar:
 argocd login <ARGOCD_SERVER>
 
     # Acessos
     User: admin
     Senha: argocd-server-<senha>
 
-# Trocar a senha:
+### Trocar a senha:
 argocd account update-password
 
-# Registrar um Cluster
+### Registrar um Cluster
 argocd cluster add kubernetes-admin@cluster.local
 
-## Criando secret
-kubectl -n argocd create secret generic my-secret --from-file=ssh-privatekey=/root/.ssh/argocd --from-file=ssh-publickey=/root/.ssh/argocd.pub
+### Criando secret
+
+ssh-keygen -f /root/.ssh/argocd -t rsa [ENTER varias vezes]
+
+Importar esta chave no repo de infra previamente criado
+
+```sh
+kubectl -n argocd create secret generic my-secret --from-file=ssh-privatekey=/root/.ssh/argocd --from-file=ssh-publickey=/root/.ssh/argocd.pub    
+```
 
 ### ConfigMap
 cat > configmap.yml
